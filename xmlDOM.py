@@ -44,45 +44,51 @@ print len(XML_states)
 
 
 def codeGenStates(XML_states):
-    code = "states = ["
+    code = []
+    code.append("states = [\n")
 
     arrayOfStates = []
     for state in XML_states:
-        arrayOfStates.append("State(name='" + state.name + "') ")
+        arrayOfStates.append("\tState(name='" + state.name + "')")
 
-    code += ",".join(str(item) for item in arrayOfStates)
-    code += "]"
+    code.append(",\n".join(str(item) for item in arrayOfStates))
+    code.append("\n]")
     return code
 
 
 def codeGenTransitions(XML_states):
-    code = "transitions = ["
+    code = []
+    code.append("transitions = [\n")
 
     arrayOfTransition = []
     for state in XML_states:
         for trans in state.transitions:
             print trans.event
             arrayOfTransition.append(
-                "{'trigger': '" + trans.event + "', 'source': '" + state.name + "', 'dest': '" + trans.targetStateName + "'}")
+                "\t{'trigger': '" + trans.event + "', 'source': '" + state.name + "', 'dest': '" + trans.targetStateName + "'}")
 
-    code += ",".join(str(item) for item in arrayOfTransition)
-    code += "]"
+    code.append(",\n".join(str(item) for item in arrayOfTransition))
+    code.append("\n]")
     return code
 
 
 def generateCode(XML_state):
-    code = "#Define the class of your object \n\nclass CLASS_NAME(object):\n   pass\n\n#instance of your object" \
-           "\nOBJECT_NAME = CLASS_NAME()\n\n"
-    code += codeGenStates(XML_states)
-    code += "\n"
-    code += codeGenTransitions(XML_states)
-    code += "\n# Initialize\n"
-    code += "machine = Machine(OBJECT_NAME, states=states, transitions=transitions, initial='" + XML_states[
-        0].name + "')"
+    code = []
+    code.append("#Define the class of your object\n")
+    code.append("class CLASS_NAME(object):\n\tpass\n")
+    code.append("#instance of your object\n")
+    code.append("OBJECT_NAME = CLASS_NAME()\n\n")
+    code.extend(codeGenStates(XML_states))
+    code.append("\n")
+    code.extend(codeGenTransitions(XML_states))
+    code.append("\n")
+    code.append("\n# Initialize\n")
+    code.append("machine = Machine(OBJECT_NAME, states=states, transitions=transitions, initial='" + XML_states[
+        0].name + "')")
 
     return code
 
 
 f = open('gen.py.partial', 'w+')
-f.write(generateCode(XML_states))
+f.writelines(generateCode(XML_states))
 f.close()
