@@ -1,0 +1,12 @@
+#Define the class of your object 
+
+class CLASS_NAME(object):
+   pass
+
+#instance of your object
+OBJECT_NAME = CLASS_NAME()
+
+states = [State(name='off') ,State(name='on') ]
+transitions = [{'trigger': '1', 'source': 'off', 'dest': 'on'},{'trigger': '0', 'source': 'on', 'dest': 'off'}]
+# Initialize
+machine = Machine(OBJECT_NAME, states=states, transitions=transitions, initial='off')
