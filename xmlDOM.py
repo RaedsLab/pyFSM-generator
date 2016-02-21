@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
+import time
 import xml.dom.minidom
+
+import jinja2
 
 
 class XML_State(object):
@@ -40,55 +43,60 @@ for state in states:
     XML_state.transitions = XML_Transitions
     XML_states.append(XML_state)
 
-print len(XML_states)
-
 
 def codeGenStates(XML_states):
     code = []
-    code.append("states = [\n")
+    code.append("states = [")
 
     arrayOfStates = []
     for state in XML_states:
-        arrayOfStates.append("\tState(name='" + state.name + "')")
+        arrayOfStates.append("\t\t\tState(name='" + state.name + "')")
 
     code.append(",\n".join(str(item) for item in arrayOfStates))
-    code.append("\n]")
+    code.append("\t\t]")
     return code
 
 
 def codeGenTransitions(XML_states):
     code = []
-    code.append("transitions = [\n")
+    code.append("transitions = [")
 
     arrayOfTransition = []
     for state in XML_states:
         for trans in state.transitions:
             print trans.event
             arrayOfTransition.append(
-                "\t{'trigger': '" + trans.event + "', 'source': '" + state.name + "', 'dest': '" + trans.targetStateName + "'}")
+                "\t\t\t{'trigger': '" + trans.event + "', 'source': '" + state.name + "', 'dest': '" + trans.targetStateName + "'}")
 
     code.append(",\n".join(str(item) for item in arrayOfTransition))
-    code.append("\n]")
+    code.append("\t\t]")
     return code
 
 
 def generateCode(XML_state):
-    code = []
-    code.append("#Define the class of your object\n")
-    code.append("class CLASS_NAME(object):\n\tpass\n")
-    code.append("#instance of your object\n")
-    code.append("OBJECT_NAME = CLASS_NAME()\n\n")
-    code.extend(codeGenStates(XML_states))
-    code.append("\n")
-    code.extend(codeGenTransitions(XML_states))
-    code.append("\n")
-    code.append("\n# Initialize\n")
-    code.append("machine = Machine(OBJECT_NAME, states=states, transitions=transitions, initial='" + XML_states[
-        0].name + "')")
+    templateLoader = jinja2.FileSystemLoader(searchpath=".")
 
-    return code
+    templateEnv = jinja2.Environment(loader=templateLoader)
+
+    TEMPLATE_FILE = "FSMModelTemplate.jinja"
+
+    template = templateEnv.get_template(TEMPLATE_FILE)
+
+    # Specify any input variables to the template as a dictionary.
+    templateVars = {"instanceCode": "self.objectName = ClassName()",
+                    "classCode": "class ClassName(object):\n\tpass\n",
+                    "initializeCode": "machine = Machine(self.objectName, states=self.states, transitions=self.transitions, initial='" +
+                                      XML_states[0].name + "')",
+                    "statesCode": '\n'.join([str(x) for x in codeGenStates(XML_states)]),
+                    "transitionsCode": '\n'.join([str(x) for x in codeGenTransitions(XML_states)]),
+                    "day": str(time.strftime("%d/%m/%Y")) + " " + str(time.strftime("%X"))
+                    }
+
+    # Finally, process the template to produce our final text.
+    outputText = template.render(templateVars)
+    return outputText
 
 
-f = open('gen.py.partial', 'w+')
+f = open('gen.py', 'w+')
 f.writelines(generateCode(XML_states))
 f.close()
