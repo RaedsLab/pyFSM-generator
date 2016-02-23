@@ -5,11 +5,11 @@
     <!-- (C) Stefan Duffner, Rainer Strobel			-->
 
     <state id="off">
-        <transition event="1" target="on">
+        <transition event="turnOn" target="on">
         </transition>
     </state>
     <state id="on">
-        <transition event="0" target="off">
+        <transition event="turnOff" target="off">
         </transition>
     </state>
 </scxml>

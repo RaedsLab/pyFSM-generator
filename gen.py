@@ -6,7 +6,7 @@
  Model:         A generated Python FSM DEVS model
  Authors:       Raed Chammam
  Organization:  unice Polytech Sophia
- Date:          21/02/2016 13:50:39
+ Date:          23/02/2016 07:57:28
  License:       GPL
 -------------------------------------------------------------------------------
 """
@@ -14,7 +14,8 @@
 ### Specific import ------------------------------------------------------------
 from DomainInterface.DomainBehavior import DomainBehavior
 from DomainInterface.Object import Message
-
+from transitions import Machine
+from transitions import State
 
 ### Model class ----------------------------------------------------------------
 class MiddleSample(DomainBehavior):
@@ -35,15 +36,15 @@ class MiddleSample(DomainBehavior):
         ''' The object '''
         self.objectName = ClassName()
         # The states go below
-        states = [
+        self.states = [
 			State(name='off'),
 			State(name='on')
 		]
 
         # The transition go below
-        transitions = [
-			{'trigger': '1', 'source': 'off', 'dest': 'on'},
-			{'trigger': '0', 'source': 'on', 'dest': 'off'}
+        self.transitions = [
+			{'trigger': 'turnOn', 'source': 'off', 'dest': 'on'},
+			{'trigger': 'turnOff', 'source': 'on', 'dest': 'off'}
 		]
 
         # Initialize below
@@ -74,7 +75,7 @@ class MiddleSample(DomainBehavior):
         n = len(self.y)
         print "N : " + str(n)
 
-        '''INSERT strategy here [Change the state of the FMS (self.lump)]'''
+        '''INSERT strategy here [Change the state of the FMS (self.objectName)]'''
 
         ''' End of strategy '''
 

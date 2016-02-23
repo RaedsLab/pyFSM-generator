@@ -46,7 +46,7 @@ for state in states:
 
 def codeGenStates(XML_states):
     code = []
-    code.append("states = [")
+    code.append("self.states = [")
 
     arrayOfStates = []
     for state in XML_states:
@@ -59,7 +59,7 @@ def codeGenStates(XML_states):
 
 def codeGenTransitions(XML_states):
     code = []
-    code.append("transitions = [")
+    code.append("self.transitions = [")
 
     arrayOfTransition = []
     for state in XML_states:
