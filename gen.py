@@ -6,7 +6,7 @@
  Model:         A generated Python FSM DEVS model
  Authors:       Raed Chammam
  Organization:  unice Polytech Sophia
- Date:          23/02/2016 07:57:28
+ Date:          23/02/2016 10:32:37
  License:       GPL
 -------------------------------------------------------------------------------
 """
