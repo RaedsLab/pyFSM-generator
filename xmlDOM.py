@@ -4,7 +4,13 @@ import time
 import xml.dom.minidom
 
 import jinja2
+import sys
+import os
 
+
+
+xmlFile = sys.argv[1]
+outputFile = sys.argv[2]
 
 class XML_State(object):
     def __init__(self):
@@ -22,7 +28,7 @@ class XML_Transition(object):
 XML_states = []
 
 # Open XML document using minidom parser
-DOMTree = xml.dom.minidom.parse("FSM2.xml")
+DOMTree = xml.dom.minidom.parse(xmlFile)
 collection = DOMTree.documentElement
 
 # Get all the states in the collection
@@ -80,7 +86,7 @@ def generateCode(XML_state):
 
     TEMPLATE_FILE = "FSMModelTemplate.jinja"
 
-    template = templateEnv.get_template(TEMPLATE_FILE)
+    template = templateEnv.get_template(os.path.join(os.path.dirname(__file__),TEMPLATE_FILE))
 
     # Specify any input variables to the template as a dictionary.
     templateVars = {"instanceCode": "self.objectName = ClassName()",
@@ -97,6 +103,6 @@ def generateCode(XML_state):
     return outputText
 
 
-f = open('gen.py', 'w+')
+f = open(outputFile, 'w+')
 f.writelines(generateCode(XML_states))
 f.close()
